@@ -1,0 +1,88 @@
+#=================================================================
+# 
+#=================================================================
+DEBUG=1
+PROFILE=0
+
+#ifeq "$(UNAME)" "Darwin"
+#  WXCONFIG = $(BASEDIR)/../wxWidgets-2.9.1/osx-build/wx-config --unicode=yes
+#else
+##  WXCONFIG = /usr/bin/wx-config
+#WXCONFIG= /home/reuter/projects/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
+#endif
+
+#WXCONFIG = $(HOME)/links/work/projects/laplace-libraries/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
+#WXCONFIG = ../wxWidgets-2.9.3/osx64-build/wx-config --unicode=yes
+WXCONFIG = ../wxWidgets/build-osx-32-64/wx-config --unicode=yes
+WXCONFIGLIBS := $(shell $(WXCONFIG) --libs)
+WXCONFIGLIBS := $(WXCONFIGLIBS:-lpng=/opt/local/lib/libpng.a)
+WXCONFIGLIBS := $(WXCONFIGLIBS:-lz=/opt/local/lib/libz.a)
+WXCONFIGLIBS := $(WXCONFIGLIBS:-lexpat=/opt/local/lib/libexpat.a)
+#  WXCONFIGLIBS := $(WXCONFIGLIBS:-liconv=/opt/local/lib/libiconv.a)
+# libiconv and libexpat should be on most systems, 
+# libiconv is GPL (so I don't include it for now)
+
+CC=g++
+#CFLAGS= -Wall `wx-config --cppflags`
+#LDFLAGS= `wx-config --libs`
+CFLAGS= -arch i386 -arch x86_64 -Wall `$(WXCONFIG) --cppflags`
+CFLAGSD= `$(WXCONFIG) --cppflags`
+LDFLAGS=  -arch i386 -arch x86_64 $(WXCONFIGLIBS)
+#LDFLAGS= -arch x86_64 $(WXCONFIGLIBS)
+
+ifeq ($(DEBUG),1)
+	CFLAGS += -g -DDEBUG
+else
+	CFLAGS += -O4 
+	LDFLAGS += -s 
+endif
+
+ifeq ($(PROFILE),1)
+	CFLAGS  += -pg 
+	LDFLAGS += -pg 
+endif
+
+SOURCES=fdim.cc FdimFrame.cc BitmapFractal.cc BitmapView.cc Line.cc LineView.cc
+
+OBJS = $(patsubst %.cc,build/%.o,$(SOURCES))
+
+TARGET=fdim
+
+.PHONY: all clean $(TARGET)
+
+all: build/$(TARGET)
+
+
+build/$(TARGET): $(OBJS) 
+	$(CC) $^ -o $@ $(LDFLAGS)
+	strip $@
+#	cp build/$(TARGET) fdim.app/Contents/MacOS/$(TARGET)
+#	upx $@
+
+install: build/$(TARGET)
+	mkdir -p $(TARGET).app/Contents/MacOS
+	mkdir -p $(TARGET).app/Contents/Resources/English.lproj
+	echo "APPLFDIM" > $(TARGET).app/Contents/PkgInfo
+	cp Info.plist $(TARGET).app/Contents/
+	cp build/$(TARGET) $(TARGET).app/Contents/MacOS/$(TARGET)
+
+
+#----------------------------------------------------
+
+build/%.o: %.cc
+	$(CC) $(CFLAGS) $< -c -o $@
+
+clean:
+	-rm -f build/*
+	-rm -f $(TARGET).app
+
+# automatic dependencies
+build/%.d: %.cc
+	@echo "Updating dependency file for $<"
+	@set -e; $(CC) -MM $(CFLAGSD) $< \
+		| sed 's;\($*\)\.o[ :]*;build\/\1.o $@ : ;g' > $@; \
+		[ -s $@ ] || rm -f $@
+
+ifneq ($(MAKECMDGOALS),clean)
+-include $(patsubst %.cc,build/%.d,$(SOURCES))
+endif

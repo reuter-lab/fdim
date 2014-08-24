@@ -1,0 +1,82 @@
+#=================================================================
+# 
+#=================================================================
+DEBUG=1
+PROFILE=0
+
+#ifeq "$(UNAME)" "Darwin"
+#  WXCONFIG = $(BASEDIR)/../wxWidgets-2.9.1/osx-build/wx-config --unicode=yes
+#else
+##  WXCONFIG = /usr/bin/wx-config
+#WXCONFIG= /home/reuter/projects/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
+#endif
+
+#WXCONFIG = $(HOME)/links/work/projects/laplace-libraries/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
+#WXCONFIG = ../wxWidgets-2.9.3/osx64-build/wx-config --unicode=yes
+#WXCONFIG = c:\wxWidgets-2.9.3\build\msw\gcc_mswu\wx-config --unicode=yes --static=yes --wxcfg=gcc_lib\mswu
+# there is a http://sites.google.com/site/wxconfig/ for windows, but gave wrong library names (d appended)
+
+WXDIR = C:\wxWidgets-2.9.3
+
+#CC=g++
+CC=mingw32-g++
+
+#CFLAGS= -Wall `wx-config --cppflags`
+#LDFLAGS= `wx-config --libs`
+CFLAGS= -Wall -mthreads -DHAVE_W32API_H -D__WXMSW__ -D__WXDEBUG__ -D_UNICODE -I$(WXDIR)\lib\gcc_lib\mswu -I$(WXDIR)\include -Wno-ctor-dtor-privacy -pipe -fmessage-length=0   
+LDFLAGS=  -static-libgcc -static-libstdc++ -mthreads -Wl,--subsystem,windows -mwindows -L$(WXDIR)\lib\gcc_lib -lwxmsw29u_html -lwxmsw29u_adv -lwxmsw29u_core -lwxbase29u_xml -lwxbase29u_net -lwxbase29u -lwxtiff -lwxjpeg -lwxpng -lwxzlib -lwxregexu -lwxexpat -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwxregexu -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 
+RCINCS    = --include-dir "$(WXDIR)/include"
+
+ifeq ($(DEBUG),1)
+	CFLAGS += -g -DDEBUG
+else
+	CFLAGS += -O4 
+	LDFLAGS += -s 
+endif
+
+ifeq ($(PROFILE),1)
+	CFLAGS  += -pg 
+	LDFLAGS += -pg 
+endif
+
+TNAME=fdim
+TARGET=$(TNAME).exe
+
+SOURCES=fdim.cc FdimFrame.cc BitmapFractal.cc BitmapView.cc Line.cc LineView.cc
+
+OBJS = $(patsubst %.cc,build/%.o,$(SOURCES))
+
+.PHONY: all clean $(TARGET)
+
+all: build/$(TARGET)
+
+# get http://upx.sourceforge.net/ for linux and windows
+build/$(TARGET): $(OBJS)
+#	echo aaaa ICON "$(TNAME).ico" > build/$(TNAME).rc
+##	echo #define wxUSE_NO_MANIFEST 1 >> build/$(TNAME).rc
+	echo #include "$(WXDIR)\include\wx\msw\wx.rc" > build/$(TNAME).rc
+	windres build/$(TNAME).rc -O coff  $(RCINCS) -o $@
+	$(CC) $^  -o $@ $(LDFLAGS) 
+	strip $@
+	upx $@
+
+ 
+#----------------------------------------------------
+
+build/%.o: %.cc
+	$(CC) $(CFLAGS) $< -c -o $@
+
+clean:
+	del build\*
+
+
+# automatic dependencies
+build/%.d: %.cc
+	@echo "Updating dependency file for $<"
+	@set -e; $(CC) -MM $(CFLAGS) $< \
+		| sed 's;\($*\)\.o[ :]*;build\/\1.o $@ : ;g' > $@; \
+		[ -s $@ ] || rm -f $@
+
+ifneq ($(MAKECMDGOALS),clean)
+-include $(patsubst %.cc,build/%.d,$(SOURCES))
+endif

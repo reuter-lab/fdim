@@ -1,0 +1,63 @@
+#=================================================================
+# 
+#=================================================================
+DEBUG=1
+PROFILE=0
+
+WXCONFIG = /autofs/space/riemann_001/users/mreuter/packages/wxWidgets-3.0.0/build-gtk64-static/wx-config --static=yes
+UPX = ~/bin/upx
+
+
+MKDIR_P = mkdir -p
+CC=g++
+CFLAGS= -Wall `$(WXCONFIG) --cppflags`
+LDFLAGS= `$(WXCONFIG) --libs`
+
+ifeq ($(DEBUG),1)
+	CFLAGS += -g -DDEBUG
+else
+	CFLAGS += -O4 
+	LDFLAGS += -s 
+endif
+
+ifeq ($(PROFILE),1)
+	CFLAGS  += -pg 
+	LDFLAGS += -pg 
+endif
+
+SOURCES=fdim.cc FdimFrame.cc BitmapFractal.cc BitmapView.cc Line.cc LineView.cc
+
+OBJS = $(patsubst %.cc,build/%.o,$(SOURCES))
+
+TARGET=fdim
+
+.PHONY: all clean $(TARGET)
+
+all: build build/$(TARGET)
+
+build:
+	${MKDIR_P} build
+
+build/$(TARGET): $(OBJS) 
+	$(CC) $^ -o $@ $(LDFLAGS)
+	strip $@
+	${UPX} $@
+
+#----------------------------------------------------
+
+build/%.o: %.cc
+	$(CC) $(CFLAGS) $< -c -o $@
+
+clean:
+	-rm -f build/*
+
+# automatic dependencies
+build/%.d: %.cc
+	@echo "Updating dependency file for $<"
+	@set -e; $(CC) -MM $(CFLAGS) $< \
+		| sed 's;\($*\)\.o[ :]*;build\/\1.o $@ : ;g' > $@; \
+		[ -s $@ ] || rm -f $@
+
+ifneq ($(MAKECMDGOALS),clean)
+-include $(patsubst %.cc,build/%.d,$(SOURCES))
+endif
