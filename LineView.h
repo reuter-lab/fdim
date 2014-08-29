@@ -1,3 +1,12 @@
+/*
+ * Original Author: Martin Reuter
+ * Copyright 2014 Martin Reuter
+ * 
+ * Terms and conditions for use, reproduction, distribution and contribution
+ * are found in the file 'LICENSE'
+ *
+ */
+
 #ifndef LINEVIEW_H
 #define LINEVIEW_H
 
