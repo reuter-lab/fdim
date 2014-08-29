@@ -4,15 +4,6 @@
 DEBUG=1
 PROFILE=0
 
-#ifeq "$(UNAME)" "Darwin"
-#  WXCONFIG = $(BASEDIR)/../wxWidgets-2.9.1/osx-build/wx-config --unicode=yes
-#else
-##  WXCONFIG = /usr/bin/wx-config
-#WXCONFIG= /home/reuter/projects/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
-#endif
-
-#WXCONFIG = $(HOME)/links/work/projects/laplace-libraries/wxGTK-2.8.12/gtk-static-build/wx-config --static=yes
-#WXCONFIG = ../wxWidgets-2.9.3/osx64-build/wx-config --unicode=yes
 WXCONFIG = ../wxWidgets/build-osx-32-64/wx-config --unicode=yes
 WXCONFIGLIBS := $(shell $(WXCONFIG) --libs)
 WXCONFIGLIBS := $(WXCONFIGLIBS:-lpng=/opt/local/lib/libpng.a)
