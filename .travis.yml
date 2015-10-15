@@ -7,7 +7,7 @@ language:
   - cpp
 compiler:
   - gcc
-before_scripts:
+before_script:
   - mkdir build
   - cd build
   - cmake ..  
