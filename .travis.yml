@@ -1,16 +1,17 @@
+language: cpp
+  
+compiler: gcc
+  
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libwxgtk3.0-dev libgtk2.0-dev
   - git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")"
   - git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")" > ./src/RevId.h
-language:
-  - cpp
-compiler:
-  - gcc
+
 before_script:
   - mkdir build
   - cd build
   - cmake ..  
-script: 
-  - make
+
+script: make
     
