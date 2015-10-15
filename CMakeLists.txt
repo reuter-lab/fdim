@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
 project (FDim)
+cmake_minimum_required (VERSION 2.8)
 
 set(fdim_src 
   ./src/fdim.cc 
@@ -18,10 +18,9 @@ set(fdim_h
   ./src/LineView.h )
   
 # wxWidgets
-   set(WXWIDGETS_CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../wxWidgets-3.0.2/build-osx64-10.7" CACHE STRING "Path to wxconfig")
-   # Note, find_package() on OSX does not use wxWidgets_ROOT_DIR, use intermediate wx-config exe instead…
-   set(wxWidgets_CONFIG_EXECUTABLE "${WXWIDGETS_CONFIG_DIR}/wx-config")
-#find_package(wxWidgets REQUIRED gl core base xrc webview qa net html adv xml)
+#   set(WXWIDGETS_CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../wxWidgets-3.0.2/build-osx64-10.7" CACHE STRING "Path to wxconfig")
+#   # Note, find_package() on OSX does not use wxWidgets_ROOT_DIR, use intermediate wx-config exe instead
+#   set(wxWidgets_CONFIG_EXECUTABLE "${WXWIDGETS_CONFIG_DIR}/wx-config")
 find_package(wxWidgets REQUIRED gl core base adv)
 include(${wxWidgets_USE_FILE})
 
@@ -35,13 +34,13 @@ if (APPLE)
   set(APP_VERSION "1.1")
 
   add_custom_target(app ALL
-	COMMAND ${CMAKE_COMMAND} -E remove_directory ${APP_NAME}.app
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${APP_NAME}.app
     COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_NAME}.app/Contents/MacOS
     COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_NAME}.app/Contents/Resources/English.lproj
-	COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist" ${APP_NAME}.app/Contents/Info.plist
-	COMMAND ${CMAKE_COMMAND} -E copy fdim ${APP_NAME}.app/Contents/MacOS/FDim
-	COMMAND ${CMAKE_COMMAND} -E echo "APPLFDIM" > ${APP_NAME}.app/Contents/PkgInfo
-	COMMAND strip ${APP_NAME}.app/Contents/MacOS/${APP_NAME}
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist" ${APP_NAME}.app/Contents/Info.plist
+    COMMAND ${CMAKE_COMMAND} -E copy fdim ${APP_NAME}.app/Contents/MacOS/FDim
+    COMMAND ${CMAKE_COMMAND} -E echo "APPLFDIM" > ${APP_NAME}.app/Contents/PkgInfo
+    COMMAND strip ${APP_NAME}.app/Contents/MacOS/${APP_NAME}
     COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
     COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
     DEPENDS fdim 
@@ -66,18 +65,17 @@ if (APPLE)
 
 	# create target for packaging
 	add_custom_target(dmg
-		COMMAND ${CMAKE_COMMAND} -E remove "${APP_NAME}-${APP_VERSION}.dmg"
-	    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/package.sh" ./package.sh
-	    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Background.png" ./Background.png
-	    COMMAND ./package.sh ${APP_NAME} ${APP_VERSION} Background.png
-		COMMAND ${CMAKE_COMMAND} -E remove package.sh
-		COMMAND ${CMAKE_COMMAND} -E remove Background.png
-		DEPENDS app
-		COMMENT "Packaging ${APP_NAME}-${APP_VERSION}.dmg"
-		SOURCES ./src/Background.png ./package.sh
+    COMMAND ${CMAKE_COMMAND} -E remove "${APP_NAME}-${APP_VERSION}.dmg"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/package.sh" ./package.sh
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Background.png" ./Background.png
+    COMMAND ./package.sh ${APP_NAME} ${APP_VERSION} Background.png
+    COMMAND ${CMAKE_COMMAND} -E remove package.sh
+    COMMAND ${CMAKE_COMMAND} -E remove Background.png
+    DEPENDS app
+    COMMENT "Packaging ${APP_NAME}-${APP_VERSION}.dmg"
+    SOURCES ./src/Background.png ./package.sh
 	)
 	# Make clean should remove the app also
 	set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${APP_NAME}-${APP_VERSION}.dmg")
-
 
 endif (APPLE)
