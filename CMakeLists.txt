@@ -41,12 +41,12 @@ if (APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy fdim ${APP_NAME}.app/Contents/MacOS/FDim
     COMMAND ${CMAKE_COMMAND} -E echo "APPLFDIM" > ${APP_NAME}.app/Contents/PkgInfo
     COMMAND strip ${APP_NAME}.app/Contents/MacOS/${APP_NAME}
-    COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
     DEPENDS fdim 
     COMMENT "Creating ${APP_NAME}.app"
     SOURCES ./src/Info.plist ./src/entitlement.plist
   )
    # COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
+   # COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
 
 	# Make clean should remove the app also
 	set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${APP_NAME}.app")
