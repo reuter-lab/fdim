@@ -1,7 +1,17 @@
 language: cpp
+
+compiler:
+  - gcc
+  - clang 
+
+os:
+  - linux
+  - osx
   
-compiler: gcc
-  
+matrix:
+  allow_failures:
+    - os: osx
+    
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libwxgtk3.0-dev libgtk2.0-dev
@@ -14,4 +24,3 @@ before_script:
   - cmake ..  
 
 script: make
-    
