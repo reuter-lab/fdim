@@ -41,13 +41,12 @@ if (APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy fdim ${APP_NAME}.app/Contents/MacOS/FDim
     COMMAND ${CMAKE_COMMAND} -E echo "APPLFDIM" > ${APP_NAME}.app/Contents/PkgInfo
     COMMAND strip ${APP_NAME}.app/Contents/MacOS/${APP_NAME}
-    COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
     COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
     DEPENDS fdim 
     COMMENT "Creating ${APP_NAME}.app"
     SOURCES ./src/Info.plist ./src/entitlement.plist
   )
-#    COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
+   # COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
 
 	# Make clean should remove the app also
 	set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${APP_NAME}.app")
@@ -67,13 +66,13 @@ if (APPLE)
 	add_custom_target(dmg
     COMMAND ${CMAKE_COMMAND} -E remove "${APP_NAME}-${APP_VERSION}.dmg"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/package.sh" ./package.sh
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Background.png" ./Background.png
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/src/Background_simple.png" ./Background.png
     COMMAND ./package.sh ${APP_NAME} ${APP_VERSION} Background.png
     COMMAND ${CMAKE_COMMAND} -E remove package.sh
     COMMAND ${CMAKE_COMMAND} -E remove Background.png
     DEPENDS app
     COMMENT "Packaging ${APP_NAME}-${APP_VERSION}.dmg"
-    SOURCES ./src/Background.png ./package.sh
+    SOURCES ./src/Background_simple.png ./package.sh
 	)
 	# Make clean should remove the app also
 	set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${APP_NAME}-${APP_VERSION}.dmg")
