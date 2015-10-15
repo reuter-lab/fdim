@@ -19,9 +19,9 @@ before_install:
   # OSX
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update ; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install wxmac ; fi
-  # ALWAYS
-  - git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")"
-  - git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")" > ./src/RevId.h
+  # ALWAYS (hangs on osx for some reason)
+  #- git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")"
+  #- git show -s --format="wxT(\"<a href=\\\"http://github.com/m-reuter/fdim/commit/%H\\\">%h</a> of %cd\")" > ./src/RevId.h
 
 
 before_script:
