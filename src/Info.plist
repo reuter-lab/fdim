@@ -3,11 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleExecutable</key>
-	<string>fdim</string>
-	<key>CFBundleGetInfoString</key>
-	<string>fdim</string>
+	<string>FDim</string>
 	<key>CFBundleIconFile</key>
-	<string>fdim.icns</string>
+	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>fdim</string>
 	<key>CFBundleName</key>
@@ -17,8 +15,14 @@
 	<key>CFBundleSignature</key>
 	<string>FDIM</string>
 	<key>CFBundleVersion</key>
-	<string>0.0.1.20101215</string>
+	<string>1.1.0</string>
+	<key>CFBundleShortVersionString</key>
+  <string>1.1.0</string>
+	<key>CFBundleLongVersionString</key>
+  <string>1.1.0.20151022</string>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 </dict>
 </plist>

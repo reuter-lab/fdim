@@ -18,13 +18,10 @@ set(fdim_h
   ./src/LineView.h )
   
 # wxWidgets
-#   set(WXWIDGETS_CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../wxWidgets-3.0.2/build-osx64-10.7" CACHE STRING "Path to wxconfig")
-#   # Note, find_package() on OSX does not use wxWidgets_ROOT_DIR, use intermediate wx-config exe instead
-#   set(wxWidgets_CONFIG_EXECUTABLE "${WXWIDGETS_CONFIG_DIR}/wx-config")
 find_package(wxWidgets REQUIRED gl core base adv)
 include(${wxWidgets_USE_FILE})
 
-
+# fdim target
 add_executable( fdim ${fdim_src} ${fdim_h})
 target_link_libraries(fdim ${wxWidgets_LIBRARIES}  )
 
@@ -41,13 +38,13 @@ if (APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy fdim ${APP_NAME}.app/Contents/MacOS/FDim
     COMMAND ${CMAKE_COMMAND} -E echo "APPLFDIM" > ${APP_NAME}.app/Contents/PkgInfo
     COMMAND strip ${APP_NAME}.app/Contents/MacOS/${APP_NAME}
+    COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
+    COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
     DEPENDS fdim 
     COMMENT "Creating ${APP_NAME}.app"
-    SOURCES ./src/Info.plist ./src/entitlement.plist
+    SOURCES ./src/Info.plist ./src/entitlement.plist ./src/icon.iconset
   )
-   # COMMAND iconutil -c icns ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.iconset -o ${APP_NAME}.app/Contents/Resources/icon.icns
-   # COMMAND codesign -s - -f --entitlements ${CMAKE_CURRENT_SOURCE_DIR}/src/entitlement.plist ${APP_NAME}.app/
-
+   
 	# Make clean should remove the app also
 	set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${APP_NAME}.app")
 

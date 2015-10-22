@@ -4,7 +4,7 @@
 DEBUG=1
 PROFILE=0
 
-WXCONFIG = ../wxWidgets/build-osx-32-64/wx-config --unicode=yes
+WXCONFIG = ../../wxWidgets-3.0.2/build-osx64-10.7/wx-config --unicode=yes
 WXCONFIGLIBS := $(shell $(WXCONFIG) --libs)
 WXCONFIGLIBS := $(WXCONFIGLIBS:-lpng=/opt/local/lib/libpng.a)
 WXCONFIGLIBS := $(WXCONFIGLIBS:-lz=/opt/local/lib/libz.a)
@@ -16,10 +16,11 @@ WXCONFIGLIBS := $(WXCONFIGLIBS:-lexpat=/opt/local/lib/libexpat.a)
 CC=g++
 #CFLAGS= -Wall `wx-config --cppflags`
 #LDFLAGS= `wx-config --libs`
-CFLAGS= -arch i386 -arch x86_64 -Wall `$(WXCONFIG) --cppflags`
+#CFLAGS= -arch i386 -arch x86_64 -Wall `$(WXCONFIG) --cppflags`
+CFLAGS= -arch x86_64 -Wall `$(WXCONFIG) --cppflags`
 CFLAGSD= `$(WXCONFIG) --cppflags`
-LDFLAGS=  -arch i386 -arch x86_64 $(WXCONFIGLIBS)
-#LDFLAGS= -arch x86_64 $(WXCONFIGLIBS)
+#LDFLAGS=  -arch i386 -arch x86_64 $(WXCONFIGLIBS)
+LDFLAGS= -arch x86_64 $(WXCONFIGLIBS)
 
 ifeq ($(DEBUG),1)
 	CFLAGS += -g -DDEBUG
@@ -41,8 +42,10 @@ TARGET=fdim
 
 .PHONY: all clean $(TARGET)
 
-all: build/$(TARGET)
+all: builddir build/$(TARGET)
 
+builddir:
+	mkdir -p ./build
 
 build/$(TARGET): $(OBJS) 
 	$(CC) $^ -o $@ $(LDFLAGS)
@@ -51,11 +54,11 @@ build/$(TARGET): $(OBJS)
 #	upx $@
 
 install: build/$(TARGET)
-	mkdir -p $(TARGET).app/Contents/MacOS
-	mkdir -p $(TARGET).app/Contents/Resources/English.lproj
-	echo "APPLFDIM" > $(TARGET).app/Contents/PkgInfo
-	cp Info.plist $(TARGET).app/Contents/
-	cp build/$(TARGET) $(TARGET).app/Contents/MacOS/$(TARGET)
+	mkdir -p build/$(TARGET).app/Contents/MacOS
+	mkdir -p build/$(TARGET).app/Contents/Resources/English.lproj
+	echo "APPLFDIM" > build/$(TARGET).app/Contents/PkgInfo
+	cp Info.plist build/$(TARGET).app/Contents/
+	cp build/$(TARGET) build/$(TARGET).app/Contents/MacOS/$(TARGET)
 
 
 #----------------------------------------------------
@@ -68,7 +71,7 @@ clean:
 	-rm -f $(TARGET).app
 
 # automatic dependencies
-build/%.d: %.cc
+build/%.d: buildir %.cc
 	@echo "Updating dependency file for $<"
 	@set -e; $(CC) -MM $(CFLAGSD) $< \
 		| sed 's;\($*\)\.o[ :]*;build\/\1.o $@ : ;g' > $@; \
