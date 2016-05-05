@@ -20,21 +20,21 @@ class LineView;
 class CFdimFrame : public wxFrame
 {
 public:
-	CFdimFrame();
+  CFdimFrame();
 
 private:
-	wxString idir;
+  wxString idir;
 
-	BitmapFractal  bitmapFractal;
-	Line           line;
-	BitmapView    *bitmapView;
-	LineView      *lineView;
-	
-	void OnFileOBitmap(wxCommandEvent& event);
-	void OnFileExit(wxCommandEvent& event);
-	void OnCalc(wxCommandEvent& event);
-	void OnLineViewChanged(wxCommandEvent& event);
-	void GetInfo(wxCommandEvent& event);
-	DECLARE_EVENT_TABLE()
+  BitmapFractal  bitmapFractal;
+  Line           line;
+  BitmapView    *bitmapView;
+  LineView      *lineView;
+  
+  void OnFileOBitmap(wxCommandEvent& event);
+  void OnFileExit(wxCommandEvent& event);
+  void OnCalc(wxCommandEvent& event);
+  void OnLineViewChanged(wxCommandEvent& event);
+  void GetInfo(wxCommandEvent& event);
+  DECLARE_EVENT_TABLE()
 };
 #endif

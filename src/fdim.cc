@@ -13,7 +13,7 @@
 class MyApp : public wxApp
 {
 public:
-    virtual bool OnInit();
+  virtual bool OnInit();
 };
 
 IMPLEMENT_APP(MyApp)

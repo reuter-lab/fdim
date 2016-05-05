@@ -29,9 +29,9 @@ template<class T> T clampLow(T v, T b) { return max(v,b); }
 template<class T> T clampHigh(T v, T b) { return min(v,b); }
 
 template<class T> void mySwap( T& a, T& b) {
-	T t(a);
-	a = b;
-	b = t;
+  T t(a);
+  a = b;
+  b = t;
 }
 
 

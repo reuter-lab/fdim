@@ -19,21 +19,21 @@ DECLARE_EVENT_TYPE(myEVT_LINEVIEW_CHANGED,-1)
 class LineView: public wxWindow 
 {
 public:
-	LineView(wxWindow* parent, const wxWindowID id);
-	void setLine(Line *line);
+  LineView(wxWindow* parent, const wxWindowID id);
+  void setLine(Line *line);
 private:
-	static const int PAD = 20;
-	Line *line;
-	int   indices[2];
-	int   sel;
+  static const int PAD = 20;
+  Line *line;
+  int   indices[2];
+  int   sel;
 
-	void OnPaint(wxPaintEvent& event);
-	void OnLeftDown(wxMouseEvent& event);
+  void OnPaint(wxPaintEvent& event);
+  void OnLeftDown(wxMouseEvent& event);
 
-	void transform(double x, double y, int& tx, int &ty);
-	void inverseTransform(int tx, int ty, double& x, double &y);
+  void transform(double x, double y, int& tx, int &ty);
+  void inverseTransform(int tx, int ty, double& x, double &y);
 
-	DECLARE_EVENT_TABLE()
+  DECLARE_EVENT_TABLE()
 };
 
 
