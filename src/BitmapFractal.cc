@@ -242,9 +242,12 @@ double BitmapFractal::probability(const wxRect& sel, Line& L)
   printf("==================================================\n");
   L.clear();
   // Iterate over all points and all l
-  for (l = 1; l <= lmax; l += 2)
+//  for (l = 1; l <= lmax; l += 2)
+  for (l = 1; l <= lmax; l += 4)
   {
     r = (l - 1) / 2;
+    gewsum = 0;
+#pragma omp parallel for private (x,m,yt,xt) reduction(+:gewsum)
     for (y = (lmax - 1) / 2; y < h1 - (lmax - 1) / 2; y++)
     {
       for (x = (lmax - 1) / 2; x < w1 - (lmax - 1) / 2; x++)
@@ -266,9 +269,9 @@ double BitmapFractal::probability(const wxRect& sel, Line& L)
     }
     printf(" %3d    %f   %12.6f    %10.6f  \n", l, log((double) l), gewsum, -log(gewsum));
     L.add(log((double) l), -log(gewsum));
-    gewsum = 0;
   }
-  L.calc(2,15);
+//  L.calc(2,15);
+  L.calc(1,15);
   fractdim = L.slope();
   printf("Fractaldim  [5-31] ist %f\n", L.slope());
   printf("Correlation [5-31] ist %f\n", L.correlation());

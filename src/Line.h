@@ -27,6 +27,9 @@ public:
 
   // Fuegt neuen Punkt hinzu
   void add(double xi, double yi);
+  
+  // reverses order of elements
+  void reverse();
 
   // berechnet Ausgleichsgerade für die Punkte tfirst ... tlast
   void calc(int tfirst, int tlast);

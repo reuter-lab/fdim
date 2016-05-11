@@ -43,6 +43,23 @@ void Line::add(double xi, double yi)
   ++len;
 }
 
+void Line::reverse()
+{
+
+  double temp;
+  int i;
+  for (i=0;i<len/2;i++)
+  {
+    temp = x[i];
+    x[i] = x[len-1-i];
+    x[len-1-i] = temp;
+    temp = y[i];
+    y[i] = y[len-1-i];
+    y[len-1-i] = temp;
+    
+  }
+
+}
 
 void Line::calc(int first_, int last_)
 {

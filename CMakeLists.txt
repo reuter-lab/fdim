@@ -21,6 +21,14 @@ set(fdim_h
 find_package(wxWidgets REQUIRED gl core base adv)
 include(${wxWidgets_USE_FILE})
 
+IF(NOT APPLE)
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  endif()
+ENDIF()
+
 # fdim target
 add_executable( fdim ${fdim_src} ${fdim_h})
 target_link_libraries(fdim ${wxWidgets_LIBRARIES}  )
