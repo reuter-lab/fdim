@@ -243,28 +243,32 @@ double BitmapFractal::probability(const wxRect& sel, Line& L)
   L.clear();
   // Iterate over all points and all l
 //  for (l = 1; l <= lmax; l += 2)
-  for (l = 1; l <= lmax; l += 4)
+  unsigned char gray=0;
+  int border = (lmax - 1) / 2;
+  for (l = 3; l <= lmax; l += 2)
   {
     r = (l - 1) / 2;
     gewsum = 0;
 #pragma omp parallel for private (x,m,yt,xt) reduction(+:gewsum)
-    for (y = (lmax - 1) / 2; y < h1 - (lmax - 1) / 2; y++)
+    for (y = border; y < h1 - border; y++)
     {
-      for (x = (lmax - 1) / 2; x < w1 - (lmax - 1) / 2; x++)
+      for (x = border; x < w1 - border; x++)
       {
         // Iterate over points in box around (x,y,f(x,y))
         m = 0;
+        gray = getGray(x,y);
         for (yt = y - r; yt <= y + r; yt++)
         {
           for (xt = x - r; xt <= x + r; xt++)
           {
             // Count points in box
-            if ((getGray(xt, yt) <= getGray(x, y) + r)
-              && (getGray(xt, yt) >= getGray(x, y) - r))
+            if ((getGray(xt, yt) <= gray + r)
+              && (getGray(xt, yt) >= gray - r))
               m++;
           }
         }
-        gewsum += (1 / double (m));
+        //printf(" x %d  y %d  m %d \n",x,y,m);
+        gewsum += (1.0 / double (m));
       }
     }
     printf(" %3d    %f   %12.6f    %10.6f  \n", l, log((double) l), gewsum, -log(gewsum));
