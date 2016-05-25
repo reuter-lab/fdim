@@ -63,14 +63,20 @@ double BitmapFractal::capacity(const wxRect& sel, Line& L, int lmax, int step)
   int boxsize = 2;
   int max, min;
   register int k, l, m, n;
-  lmax = 64;
-  step = 2;
+  printf("Selection w: %d, h: %d\n",getWidth(), getHeight());
+  lmax = getWidth();
+  if (getHeight() < lmax)
+    lmax= getHeight();
+  if (64 < lmax) lmax = 64;
+  if (lmax < 32)
+    printf("Warning: Image selections below 32 pixel will result in unreliable estimates!\n");
+  double dstep = 2; //1.50001;
   int wn = (int (getWidth() / lmax)) * lmax;  // neue Hoehe ohne Rand
   int hn = (int (getHeight() / lmax)) * lmax;  // neue Breite ohne Rand
   int i;
-  printf("Calculating over h=%d and w=%d\n", hn, wn);
+  printf("Calculating over w=%d and h=%d\n", wn, hn);
   L.clear();
-  for (boxsize = 2; boxsize <= lmax; boxsize *= step)
+  for (boxsize = 2; boxsize <= lmax; boxsize *= dstep)
   {
     N = 0;
     i = 0;
@@ -119,12 +125,18 @@ double BitmapFractal::information(const wxRect& sel, Line& L, int lmax, int step
   double N;
   int boxsize = 2;
   int max, min;
-  lmax = 64;
+  printf("Selection w: %d, h: %d\n",getWidth(), getHeight());
+  lmax = getWidth();
+  if (getHeight() < lmax)
+    lmax= getHeight();
+  if (64 < lmax) lmax = 64;
+  if (lmax < 32)
+    printf("Warning: Image selections below 32 pixel will result in unreliable estimates!\n");
   step = 2;
   register  int k, l, m, n;
   int wn = int (getWidth() / lmax) * lmax;  // neue Hoehe ohne Rand
   int hn = int (getHeight() / lmax) * lmax;  // neue Breite ohne Rand
-  printf("Calculating over h=%d and w=%d\n", hn, wn);
+  printf("Calculating over w=%d and h=%d\n", wn, hn);
   L.clear();
   double loghw = log((double) (hn * wn));
   for (boxsize = 2; boxsize <= lmax; boxsize *= step)
@@ -179,12 +191,18 @@ double BitmapFractal::correlation(const wxRect& sel, Line& L, int lmax, int step
   double N;
   int boxsize = 2;
   int max, min;
-  lmax = 64;
+  printf("Selection w: %d, h: %d\n",getWidth(), getHeight());
+  lmax = getWidth();
+  if (getHeight() < lmax)
+    lmax= getHeight();
+  if (64 < lmax) lmax = 64;
+  if (lmax < 32)
+    printf("Warning: Image selections below 32 pixel will result in unreliable estimates!\n");
   step = 2;
   register int k, l, m, n;
   int wn = int (getWidth() / lmax) * lmax;  // neue Hoehe ohne Rand
   int hn = int (getHeight() / lmax) * lmax;  // neue Breite ohne Rand
-  printf("Calculating over h=%d and w=%d\n", hn, wn);
+  printf("Calculating over w=%d and h=%d\n", wn, hn);
   L.clear();
   for (boxsize = 2; boxsize <= lmax; boxsize *= step)
   {
@@ -237,19 +255,24 @@ double BitmapFractal::probability(const wxRect& sel, Line& L)
   int x, y, xt, yt, r;
   int w1 = getWidth();
   int h1 = getHeight();
-  printf("Calculating over h=%d and w=%d\n", h1, w1);
+  lmax = w1;
+  if (h1 < lmax)
+    lmax= h1;
+  if (31 < lmax) lmax = 31;
+  if (lmax < 31)
+    printf("Warning: Image selections below 31 pixel will result in unreliable estimates!\n");
+  printf("Calculating over w=%d and h=%d\n", w1, h1);
   printf("\n   l     log(l)        N(l)        -log(N(l))\n");
   printf("==================================================\n");
   L.clear();
   // Iterate over all points and all l
-//  for (l = 1; l <= lmax; l += 2)
   unsigned char gray=0;
   int border = (lmax - 1) / 2;
   for (l = 3; l <= lmax; l += 2)
   {
     r = (l - 1) / 2;
     gewsum = 0;
-#pragma omp parallel for private (x,m,yt,xt) reduction(+:gewsum)
+#pragma omp parallel for private (x,m,yt,xt,gray) reduction(+:gewsum)
     for (y = border; y < h1 - border; y++)
     {
       for (x = border; x < w1 - border; x++)
@@ -274,7 +297,6 @@ double BitmapFractal::probability(const wxRect& sel, Line& L)
     printf(" %3d    %f   %12.6f    %10.6f  \n", l, log((double) l), gewsum, -log(gewsum));
     L.add(log((double) l), -log(gewsum));
   }
-//  L.calc(2,15);
   L.calc(1,15);
   fractdim = L.slope();
   printf("Fractaldim  [5-31] ist %f\n", L.slope());
